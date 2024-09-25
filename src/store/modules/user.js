@@ -1,13 +1,15 @@
-import { login, logout, getInfo } from '@/api/user'
+import { logout, getInfo, sendPhoneCode, checkPhoneCode, getUser } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
+// import Cookies from 'js-cookie'
 
 const state = {
   token: getToken(),
-  name: '',
-  avatar: '',
   introduction: '',
+  inCheckPhone: false,
+  user: null,
   roles: []
+
 }
 
 const mutations = {
@@ -17,55 +19,77 @@ const mutations = {
   SET_INTRODUCTION: (state, introduction) => {
     state.introduction = introduction
   },
-  SET_NAME: (state, name) => {
-    state.name = name
+  SET_USER: (state, data) => {
+    if (data) {
+      localStorage.setItem('user', JSON.stringify(data))
+    } else {
+      localStorage.removeItem('user')
+    }
+    state.user = data
   },
-  SET_AVATAR: (state, avatar) => {
-    state.avatar = avatar
+  IS_CHECK_PHONE: (state, value) => {
+    state.inCheckPhone = value
   },
-  SET_ROLES: (state, roles) => {
-    state.roles = roles
+  SET_ROLES: (state, value) => {
+    state.roles = value
   }
+
 }
 
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    const { username, password } = userInfo
+    const { phone } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        setToken(data.token)
+      sendPhoneCode({ phone: phone.trim() }).then(response => {
+        commit('IS_CHECK_PHONE', true)
         resolve()
       }).catch(error => {
         reject(error)
       })
     })
   },
+  // user code
+  code({ commit }, data) {
+    const { phone, code } = data
+    return new Promise((resolve, reject) => {
+      checkPhoneCode({ phone: phone.trim(), code: code.trim() })
+        .then((response) => {
+          getUser(response?.id)
+            .then(data => {
+              commit('SET_USER', data)
+              commit('SET_ROLES', ['admin'])// вфыв!!!!!!
+              resolve()
+            })
+            .catch(err => {
+              console.log(err, 'ERRR')
+              reject(err)
+            })
+        }).catch(error => {
+          reject(error)
+        })
+    })
+  },
 
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
-
-        if (!data) {
+      let user = localStorage.getItem('user')
+      if (!user) {
+        reject('Verification failed, please Login again.')
+      }
+      user = JSON.parse(user)
+      getInfo(user.id).then(response => {
+        if (!response) {
           reject('Verification failed, please Login again.')
         }
-
-        const { roles, name, avatar, introduction } = data
-
+        const { roles } = response
         // roles must be a non-empty array
         if (!roles || roles.length <= 0) {
           reject('getInfo: roles must be a non-null array!')
         }
-
-        commit('SET_ROLES', roles)
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        commit('SET_INTRODUCTION', introduction)
-        resolve(data)
+        commit('SET_ROLES', ['admin']) // фывыфв!!!!!!!
+        resolve(response)
       }).catch(error => {
         reject(error)
       })
@@ -75,16 +99,15 @@ const actions = {
   // user logout
   logout({ commit, state, dispatch }) {
     return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
-        commit('SET_TOKEN', '')
+      logout().then(() => {
+        commit('SET_USER', null)
         commit('SET_ROLES', [])
         removeToken()
         resetRouter()
-
+        console.log('asdsadsadsadsadsad')
         // reset visited views and cached views
         // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
         dispatch('tagsView/delAllViews', null, { root: true })
-
         resolve()
       }).catch(error => {
         reject(error)

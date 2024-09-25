@@ -22,6 +22,7 @@
 
 <script>
 import { transactionList } from '@/api/remote-search'
+import store from '@/store'
 
 export default {
   filters: {
@@ -46,7 +47,7 @@ export default {
   },
   methods: {
     fetchData() {
-      transactionList().then(response => {
+      transactionList({ authorUserId: store.getters.getUser?.id }).then(response => {
         this.list = response.data.items.slice(0, 8)
       })
     }
