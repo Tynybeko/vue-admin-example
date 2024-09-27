@@ -12,7 +12,7 @@ export function sendPhoneCode(data) {
 export function checkPhoneCode(data) {
   return request({
     url: '/api/auth/login-sms/check',
-    withCredentials: false,
+    withCredentials: true,
     method: 'post',
     data
   })
@@ -38,6 +38,6 @@ export function logout() {
   return request({
     url: '/api/auth/logout',
     method: 'post',
-    withCredentials: true
+    withCredentials: false
   })
 }

@@ -234,7 +234,7 @@ export default {
             .then(() => {
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
               this.loading = false
-              window.location.reload()
+              this.$router.reload()
             })
             .catch(() => {
               this.loading = false

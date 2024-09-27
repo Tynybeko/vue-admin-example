@@ -24,7 +24,7 @@ export default {
       required: true,
       type: Number
     },
-    page: {
+    offset: {
       type: Number,
       default: 1
     },
@@ -58,10 +58,10 @@ export default {
   computed: {
     currentPage: {
       get() {
-        return this.page
+        return this.offset
       },
       set(val) {
-        this.$emit('update:page', val)
+        this.$emit('update:offset', val)
       }
     },
     pageSize: {
@@ -75,13 +75,13 @@ export default {
   },
   methods: {
     handleSizeChange(val) {
-      this.$emit('pagination', { page: this.currentPage, limit: val })
+      this.$emit('pagination', { offset: this.currentPage, limit: val })
       if (this.autoScroll) {
         scrollTo(0, 800)
       }
     },
     handleCurrentChange(val) {
-      this.$emit('pagination', { page: val, limit: this.pageSize })
+      this.$emit('pagination', { offset: val, limit: this.pageSize })
       if (this.autoScroll) {
         scrollTo(0, 800)
       }

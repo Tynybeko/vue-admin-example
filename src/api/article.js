@@ -4,6 +4,15 @@ export function fetchList(query) {
   return request({
     url: 'api/posts',
     method: 'get',
+    withCredentials: false,
+    params: query
+  })
+}
+
+export function fetchUser(query) {
+  return request({
+    url: 'api/users',
+    method: 'get',
     withCredentials: true,
     params: query
   })

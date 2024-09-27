@@ -49,36 +49,50 @@
           <span class="link-type" @click="handlePreview(row)">{{ row.id }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Date" width="150px" align="center">
+      <el-table-column label="Firstname" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ new Date(row.publishedAt).toLocaleString('RU-ru') }}</span>
+          <span>{{ row.firstName || 'Not data' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Content" min-width="150px">
+      <el-table-column label="Lastname" width="110px" align="center">
         <template slot-scope="{row}">
-          <span v-html="row.text" />
-          <!-- <el-tag>{{ row.type | typeFilter }}</el-tag> -->
+          <span>{{ row.lastName || 'Not data' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Author" width="110px" align="center">
+      <el-table-column label="Phone" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.authorUserId }}</span>
+          <span>{{ row.phone || 'Not data' }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Rating" width="110px" align="center">
+      <el-table-column label="Email" min-width="110px">
+        <template slot-scope="{row}">
+          <el-tag>{{ row.email || 'Not data' }}</el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column label="Username" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.username || 'Not data' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Rating" width="160px" align="center">
         <template slot-scope="{row}">
           <span :style="{ color: raitingColoring(row.rating) }">{{ row.rating }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Likes" width="80px">
+      <el-table-column label="Bio" width="160px" align="center">
         <template slot-scope="{row}">
-          <span style="color:green;">{{ row.numLikes }}</span>
+          <span>{{ row.bio || 'Not data' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Followers" width="80px">
+        <template slot-scope="{row}">
+          <span style="color:green;">{{ row.numFollowers }}</span>
           <svg-icon style="color: green;" icon-class="arrow_up" class="meta-item__icon" />
-          <span style="color:red; margin-left: 10px;">{{ row.numDislikes }}</span>
+          <span style="color:red; margin-left: 10px;">{{ row.numNegativeFollowers }}</span>
           <svg-icon style="color: red;" icon-class="arrow_down" class="meta-item__icon" />
         </template>
       </el-table-column>
-      <el-table-column label="Reactions" align="center" width="95">
+      <!-- <el-table-column label="Reactions" align="center" width="95">
         <template slot-scope="{row}">
           <span style="color:green;">{{ row.numPositiveReactions }}</span>
           <svg-icon style="color: green;" icon-class="arrow_up" class="meta-item__icon" />
@@ -95,13 +109,13 @@
         <template slot-scope="{row}">
           <span>{{ row.numReplies }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
 
     <pagination
       v-show="total > 0"
       :total="total"
-      :page.sync="listQuery.page"
+      :offset.sync="listQuery.offset"
       :limit.sync="listQuery.limit"
       @pagination="getList"
     />
@@ -159,10 +173,9 @@
 </style>
 
 <script>
-import { fetchList, fetchPv, createArticle, updateArticle } from '@/api/article'
+import { fetchPv, createArticle, updateArticle, fetchUser } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
-import store from '@/store'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import JsonEditor from '@/components/JsonEditor'
 
@@ -188,9 +201,8 @@ export default {
       listLoading: true,
       listQuery: {
         limit: 20,
-        reversed: false,
         search: null,
-        after: null
+        offset: 1
       },
       importanceOptions: [1, 2, 3],
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
@@ -233,8 +245,7 @@ export default {
         if (!value) continue
         query[key] = value
       }
-      fetchList({
-        authorUserId: store.getters.getUser?.id,
+      fetchUser({
         ...query
 
       }).then(response => {

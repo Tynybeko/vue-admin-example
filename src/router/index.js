@@ -109,9 +109,41 @@ export const constantRoutes = [
       // },
       {
         path: 'posts',
-        component: () => import('@/views/table/complex-table'),
-        name: 'ComplexTable',
+        component: () => import('@/views/posts/index'),
+        name: 'Posts',
         meta: { title: 'Posts', icon: 'posts' }
+      }
+    ]
+  },
+  {
+    path: '/users',
+    component: Layout,
+    // redirect: '/posts',
+    name: 'Posts',
+    children: [
+      // {
+      //   path: 'dynamic-table',
+      //   component: () => import('@/views/table/dynamic-table/index'),
+      //   name: 'DynamicTable',
+      //   meta: { title: 'Dynamic Table' }
+      // },
+      // {
+      //   path: 'drag-table',
+      //   component: () => import('@/views/table/drag-table'),
+      //   name: 'DragTable',
+      //   meta: { title: 'Drag Table' }
+      // },
+      // {
+      //   path: 'inline-edit-table',
+      //   component: () => import('@/views/table/inline-edit-table'),
+      //   name: 'InlineEditTable',
+      //   meta: { title: 'Inline Edit' }
+      // },
+      {
+        path: '',
+        component: () => import('@/views/users/index'),
+        name: 'users',
+        meta: { title: 'Users', icon: 'peoples' }
       }
     ]
   },
