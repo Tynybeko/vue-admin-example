@@ -37,10 +37,10 @@ module.exports = {
       errors: true
     },
     proxy: {
-      '/api/': {
+      '^/api/': {
         target: 'https://dev.sez.us', // Целевой сервер для прокси
         changeOrigin: true, // Изменяет хост заголовка на целевой URL
-        secure: true, // Используйте true, если хотите использовать HTTPS
+        secure: true, 
       }
     }
   },
