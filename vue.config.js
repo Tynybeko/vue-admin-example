@@ -36,7 +36,13 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    proxy: 'https://dev.sez.us',
+    proxy: {
+      '/api': {
+        target: 'https://dev.sez.us', // Целевой сервер для прокси
+        changeOrigin: true, // Изменяет хост заголовка на целевой URL
+        secure: false, // Используйте true, если хотите использовать HTTPS
+      }
+    }
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
