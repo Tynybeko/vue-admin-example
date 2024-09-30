@@ -4,7 +4,6 @@ export function sendPhoneCode(data) {
   return request({
     url: '/api/auth/login-sms/send',
     method: 'post',
-    withCredentials: false,
     data
   })
 }
@@ -12,7 +11,6 @@ export function sendPhoneCode(data) {
 export function checkPhoneCode(data) {
   return request({
     url: '/api/auth/login-sms/check',
-    withCredentials: true,
     method: 'post',
     data
   })
@@ -21,23 +19,20 @@ export function checkPhoneCode(data) {
 export function getUser(id) {
   return request({
     url: `/api/users/${id}`,
-    method: 'get',
-    withCredentials: false
+    method: 'get'
 
   })
 }
 export function getInfo(id) {
   return request({
     url: `/api/users/${id}`,
-    method: 'get',
-    withCredentials: false
+    method: 'get'
   })
 }
 
 export function logout() {
   return request({
     url: '/api/auth/logout',
-    method: 'post',
-    withCredentials: false
+    method: 'post'
   })
 }
