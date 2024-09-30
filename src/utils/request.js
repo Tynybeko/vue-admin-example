@@ -4,9 +4,10 @@ import store from '@/store'
 // import { getToken } from '@/utils/auth'
 // import Cookies from 'js-cookie'
 
+const DEV = process.env.NODE_ENV === 'production'
 // create an axios instance
 const service = axios.create({
-  // baseURL: DEV ? process.env.VUE_APP_BASE_API : '', // url = base url + request url
+  baseURL: DEV ? process.env.VUE_APP_BASE_API : '', // url = base url + request url
   timeout: 5000,
   mode: 'no-cors',
   withCredentials: true,

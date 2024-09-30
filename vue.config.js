@@ -40,7 +40,7 @@ module.exports = {
       '^/api/': {
         target: 'https://dev.sez.us', // Целевой сервер для прокси
         changeOrigin: true, // Изменяет хост заголовка на целевой URL
-        secure: true, 
+        secure: true,
       }
     }
   },
